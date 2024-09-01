@@ -13,14 +13,27 @@ class MemoViewController: UIViewController,UITextFieldDelegate {
     
     var saveData: UserDefaults = UserDefaults.standard
     
+    var titles : [String] = []
+    var contents: [String] = []
     
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        titleTextField.text = saveData.object(forKey: "title") as? String
-        contentTextView.text = saveData.object(forKey: "content") as? String
+        
+        //Mark: userDefalysから古いメモを取得
+        saveData.register(defaults: ["titles":[],"contents":[]  ])
+        
+        //userDefaltからデータを取得し、各配列に代入
+        titles = saveData.object(forKey: "titles" ) as! [String]
+        contents = saveData.object(forKey: "contents")as! [String]
+        //Mark: --
+        print(titles)
+        print(contents)
+        //titleTextField.text = saveData.object(forKey: "title") as? String
+        //contentTextView.text = saveData.object(forKey: "content") as? String
         titleTextField.delegate = self
 // Do any additional setup after loading the view.
+        
     }
     func textFieldShouldClear(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
@@ -39,8 +52,17 @@ class MemoViewController: UIViewController,UITextFieldDelegate {
     */
     
     @IBAction func saveMemo(_ sender: Any){
-        saveData.set(titleTextField.text, forKey: "title")
-        saveData.set(contentTextView.text, forKey: "content")
+        // Mark: -userDefaultsにデータを保存
+        //STEP1 入力データを変数に格納
+        let title = titleTextField.text!
+        let content = contentTextView.text!
+        //STEP2 古いメモにメータを入力
+        titles.append(title)
+        contents.append(content)
+        //STEP3
+        saveData.set(titles, forKey: "title")
+        saveData.set(contents, forKey: "content")
+        //Mark: -
         
         let alert: UIAlertController=UIAlertController(title: "保存", message: "メモの保存が完了しました",preferredStyle: .alert)
             
